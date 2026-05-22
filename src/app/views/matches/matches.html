@@ -1,0 +1,256 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6">
+
+  <!-- HEADER -->
+
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+
+    <div class="flex flex-wrap items-center gap-3">
+
+      <select
+        [(ngModel)]="selectedCompFilter"
+        class="p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-semibold"
+      >
+        <option value="all">
+          Toutes les compétitions
+        </option>
+
+        <option
+          *ngFor="let c of competitions"
+          [value]="c.id"
+        >
+          {{ c.name }}
+        </option>
+      </select>
+
+      <select
+        [(ngModel)]="selectedStatusFilter"
+        class="p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-semibold"
+      >
+        <option value="all">Tous les Statuts</option>
+        <option value="Planifié">Planifiés</option>
+        <option value="En cours">En cours</option>
+        <option value="Terminé">Terminés</option>
+        <option value="Reporté">Reportés</option>
+      </select>
+
+    </div>
+
+    <button
+      *ngIf="isSportManagementRole"
+      (click)="handleOpenAutoGenerator()"
+      class="px-4 py-2 bg-emerald-500 text-white rounded-xl text-xs font-bold"
+    >
+      Générer le calendrier
+    </button>
+
+  </div>
+
+  <!-- LOADING -->
+
+  <div
+    *ngIf="loading"
+    class="flex justify-center p-20"
+  >
+    Chargement...
+  </div>
+
+  <!-- MATCHES -->
+
+  <div
+    *ngIf="!loading && filteredMatches.length > 0"
+    class="space-y-4"
+  >
+
+    <div
+      *ngFor="let m of filteredMatches"
+      class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden"
+    >
+
+      <!-- TOP -->
+
+      <div class="px-6 py-3 border-b text-xs bg-slate-50 flex justify-between">
+
+        <div>
+          <span class="font-bold text-sky-500">
+            {{ m.competitionName }}
+          </span>
+        </div>
+
+        <div>
+          {{ m.status }}
+        </div>
+
+      </div>
+
+      <!-- BODY -->
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+
+        <!-- TEAM A -->
+
+        <div class="flex items-center justify-end gap-3">
+
+          <span class="font-bold">
+            {{ m.teamAName }}
+          </span>
+
+          <div
+            class="h-10 w-10 rounded-xl text-white flex items-center justify-center font-bold"
+            [style.backgroundColor]="m.teamALogoColor"
+          >
+            {{ m.teamAName.substring(0,2) }}
+          </div>
+
+        </div>
+
+        <!-- SCORE -->
+
+        <div class="text-center">
+
+          <div
+            *ngIf="m.status === 'Terminé' || m.status === 'En cours'"
+            class="text-3xl font-bold"
+          >
+            {{ m.scoreA }} : {{ m.scoreB }}
+          </div>
+
+          <div
+            *ngIf="m.status === 'Planifié'"
+            class="text-xs"
+          >
+            {{ m.date }} à {{ m.time }}
+          </div>
+
+          <div
+            *ngIf="m.status === 'Reporté'"
+            class="text-xs text-amber-600"
+          >
+            Match reporté :
+            {{ m.reportReason }}
+          </div>
+
+        </div>
+
+        <!-- TEAM B -->
+
+        <div class="flex items-center gap-3">
+
+          <div
+            class="h-10 w-10 rounded-xl text-white flex items-center justify-center font-bold"
+            [style.backgroundColor]="m.teamBLogoColor"
+          >
+            {{ m.teamBName.substring(0,2) }}
+          </div>
+
+          <span class="font-bold">
+            {{ m.teamBName }}
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- EVENTS -->
+
+      <div
+        *ngIf="expandedMatchId === m.id"
+        class="px-6 pb-6 border-t"
+      >
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- GOALS -->
+
+          <div>
+
+            <h4 class="font-bold text-xs mb-2">
+              Buts
+            </h4>
+
+            <div
+              *ngFor="let g of m.goals"
+              class="flex justify-between py-1"
+            >
+              <span>{{ g.scorerName }}</span>
+
+              <span>
+                ⚽ {{ g.minute }}'
+              </span>
+            </div>
+
+          </div>
+
+          <!-- CARDS -->
+
+          <div>
+
+            <h4 class="font-bold text-xs mb-2">
+              Cartons
+            </h4>
+
+            <div
+              *ngFor="let c of m.cards"
+              class="flex justify-between py-1"
+            >
+              <span>{{ c.playerName }}</span>
+
+              <span>
+                {{ c.minute }}'
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+
+      <div class="px-6 py-3 border-t flex justify-between">
+
+        <button
+          *ngIf="m.goals.length > 0 || m.cards.length > 0"
+          (click)="toggleEvents(m.id)"
+          class="text-sky-500 text-xs font-bold"
+        >
+          Voir événements
+        </button>
+
+        <div
+          *ngIf="isSportManagementRole"
+          class="flex gap-2"
+        >
+
+          <button
+            (click)="handleOpenScheduleModal(m)"
+            class="px-3 py-2 border rounded-xl text-xs"
+          >
+            Planifier
+          </button>
+
+          <button
+            (click)="handleOpenScoreModal(m)"
+            class="px-3 py-2 bg-sky-500 text-white rounded-xl text-xs"
+          >
+            Score / Évènement
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- EMPTY -->
+
+  <div
+    *ngIf="!loading && filteredMatches.length === 0"
+    class="text-center py-20 bg-white rounded-3xl border"
+  >
+    Aucun match trouvé.
+  </div>
+
+</div>

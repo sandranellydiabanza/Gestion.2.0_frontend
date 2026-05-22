@@ -1,0 +1,445 @@
+<div class="p-6 max-w-7xl mx-auto space-y-8 page-fade-enter">
+
+  <!-- Banner -->
+  <div
+    class="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6"
+  >
+
+    <div class="space-y-1">
+
+      <span
+        class="text-[10px] font-mono font-extrabold text-sky-500 uppercase tracking-widest block"
+      >
+        RATIO ET PERFORMANCES
+      </span>
+
+      <h2
+        class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2"
+      >
+
+        <lucide-angular
+          [img]="BarChart3Icon"
+          class="h-5.5 w-5.5 text-sky-500"
+        >
+        </lucide-angular>
+
+        Classements et Statistiques de l'IUSJ
+
+      </h2>
+
+      <p class="text-slate-500 text-xs">
+        Visualisez les performances individuelles
+        par filières ou l'arène générale
+        inter-facultés.
+      </p>
+
+    </div>
+
+    <div>
+
+      <label
+        class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5"
+      >
+        Sélectionner un tournoi :
+      </label>
+
+      <select
+        [(ngModel)]="selectedCompId"
+        (change)="onCompetitionChange()"
+        class="p-3 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:outline-none focus:border-sky-500"
+      >
+
+        @for (comp of competitions; track comp.id) {
+
+          <option [value]="comp.id">
+            {{ comp.name }} ({{ comp.sport }})
+          </option>
+
+        }
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+
+    <div
+      class="flex flex-col items-center justify-center p-20 min-h-[300px]"
+    >
+
+      <lucide-angular
+        [img]="RefreshCwIcon"
+        class="h-8 w-8 animate-spin text-sky-500 mb-4"
+      >
+      </lucide-angular>
+
+      <p class="text-slate-500 text-sm">
+        Calcul du classement en temps réel...
+      </p>
+
+    </div>
+
+  } @else {
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left -->
+      <div class="lg:col-span-2 space-y-4">
+
+        <h3
+          class="font-bold text-slate-800 text-sm flex items-center gap-2 border-b border-slate-100 pb-2"
+        >
+
+          <lucide-angular
+            [img]="TrophyIcon"
+            class="h-4.5 w-4.5 text-amber-500"
+          >
+          </lucide-angular>
+
+          Tableau des points du championnat
+
+        </h3>
+
+        @if (loadingComp) {
+
+          <div class="flex justify-center py-10">
+
+            <lucide-angular
+              [img]="RefreshCwIcon"
+              class="h-6 w-6 animate-spin text-sky-500"
+            >
+            </lucide-angular>
+
+          </div>
+
+        } @else if (teamStandings.length > 0) {
+
+          <div
+            class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden"
+          >
+
+            <div class="overflow-x-auto">
+
+              <table
+                class="w-full text-left border-collapse"
+              >
+
+                <thead>
+
+                  <tr
+                    class="bg-slate-50 border-b border-slate-150 text-[10px] uppercase font-bold text-slate-500 tracking-wider"
+                  >
+
+                    <th class="py-3 px-4 text-center w-12">
+                      Rang
+                    </th>
+
+                    <th class="py-3 px-4">
+                      Équipe
+                    </th>
+
+                    <th class="py-3 px-4 text-center">
+                      M.J
+                    </th>
+
+                    <th class="py-3 px-4 text-center">
+                      G
+                    </th>
+
+                    <th class="py-3 px-4 text-center">
+                      N
+                    </th>
+
+                    <th class="py-3 px-4 text-center">
+                      P
+                    </th>
+
+                    <th class="py-3 px-4 text-center">
+                      BP/BC
+                    </th>
+
+                    <th class="py-3 px-4 text-center">
+                      Diff
+                    </th>
+
+                    <th
+                      class="py-3 px-4 text-center font-bold text-slate-800 bg-slate-100/50"
+                    >
+                      Pts
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody
+                  class="divide-y divide-slate-100 text-xs text-slate-600"
+                >
+
+                  @for (
+                    standing of teamStandings;
+                    track standing.teamId;
+                    let i = $index
+                  ) {
+
+                    <tr
+                      class="hover:bg-slate-50/50 transition-colors"
+                      [class.bg-amber-500/5]="i === 0"
+                      [class.font-semibold]="i === 0"
+                    >
+
+                      <td
+                        class="py-3 px-4 text-center font-mono font-bold"
+                      >
+
+                        @if (i === 0) {
+
+                          <span
+                            class="inline-flex items-center justify-center p-1.5 h-6 w-6 rounded-full bg-amber-500 text-white font-extrabold text-[10px]"
+                          >
+                            🏆
+                          </span>
+
+                        } @else {
+
+                          <span>
+                            {{ i + 1 }}
+                          </span>
+
+                        }
+
+                      </td>
+
+                      <td class="py-3 px-4">
+
+                        <div
+                          class="font-bold text-slate-800 truncate"
+                        >
+                          {{ standing.teamName }}
+                        </div>
+
+                        <div
+                          class="text-[10px] text-slate-400 font-medium"
+                        >
+                          {{ standing.etablissement }}
+                        </div>
+
+                      </td>
+
+                      <td class="py-3 px-4 text-center font-mono">
+                        {{ standing.played }}
+                      </td>
+
+                      <td
+                        class="py-3 px-4 text-center font-mono text-emerald-600 font-semibold"
+                      >
+                        {{ standing.won }}
+                      </td>
+
+                      <td
+                        class="py-3 px-4 text-center font-mono text-slate-500"
+                      >
+                        {{ standing.drawn }}
+                      </td>
+
+                      <td
+                        class="py-3 px-4 text-center font-mono text-red-500"
+                      >
+                        {{ standing.lost }}
+                      </td>
+
+                      <td
+                        class="py-3 px-4 text-center font-mono text-slate-400"
+                      >
+                        {{ standing.goalsFor }}:{{ standing.goalsAgainst }}
+                      </td>
+
+                      <td
+                        class="py-3 px-4 text-center font-mono font-bold"
+                        [ngClass]="{
+                          'text-emerald-500': standing.goalDifference > 0,
+                          'text-red-400': standing.goalDifference < 0,
+                          'text-slate-400': standing.goalDifference === 0
+                        }"
+                      >
+
+                        {{
+                          standing.goalDifference > 0
+                            ? '+' + standing.goalDifference
+                            : standing.goalDifference
+                        }}
+
+                      </td>
+
+                      <td
+                        class="py-3 px-4 text-center font-mono font-extrabold text-slate-900 bg-slate-50/70 text-sm"
+                      >
+                        {{ standing.points }}
+                      </td>
+
+                    </tr>
+
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </div>
+
+        } @else {
+
+          <div
+            class="text-center py-12 bg-white rounded-3xl border border-slate-150 p-6"
+          >
+
+            <lucide-angular
+              [img]="ShieldAlertIcon"
+              class="h-10 w-10 text-slate-300 mx-auto stroke-1 mb-2"
+            >
+            </lucide-angular>
+
+            <p
+              class="text-xs font-semibold text-slate-500"
+            >
+              Aucun match validé n’a pour le moment
+              généré de points.
+            </p>
+
+            <p
+              class="text-[10px] text-slate-400 mt-0.5"
+            >
+              Assurez-vous de marquer des matchs
+              comme « Terminé ».
+            </p>
+
+          </div>
+
+        }
+
+      </div>
+
+      <!-- Right -->
+      <div class="space-y-4">
+
+        <h3
+          class="font-bold text-slate-800 text-sm flex items-center gap-2 border-b border-slate-100 pb-2"
+        >
+
+          <lucide-angular
+            [img]="AwardIcon"
+            class="h-4.5 w-4.5 text-sky-500"
+          >
+          </lucide-angular>
+
+          Championship des Écoles IUSJ
+
+        </h3>
+
+        <div
+          class="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm space-y-4"
+        >
+
+          <span
+            class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block"
+          >
+            CUMUL DE TOUTES LES COMPÉTITIONS
+          </span>
+
+          <div class="space-y-3">
+
+            @for (
+              school of schoolStandings;
+              track school.etablissement;
+              let index = $index
+            ) {
+
+              <div
+                class="p-3.5 border border-slate-100 bg-slate-50/50 rounded-2xl flex items-center gap-3 hover:border-sky-200 hover:bg-white transition-all duration-200"
+              >
+
+                <!-- Rank -->
+                <span
+                  class="font-mono font-extrabold text-sm text-slate-400 block w-5 shrink-0"
+                >
+                  #{{ index + 1 }}
+                </span>
+
+                <!-- School -->
+                <div
+                  class="flex-1 min-w-0 flex items-center gap-2.5"
+                >
+
+                  <span
+                    class="h-8 w-11 font-extrabold text-[10px] rounded-lg border flex items-center justify-center font-mono shrink-0"
+                    [ngClass]="getSchoolLogoStyle(school.etablissement)"
+                  >
+                    {{ getSchoolInitials(school.etablissement) }}
+                  </span>
+
+                  <div class="min-w-0">
+
+                    <span
+                      class="font-extrabold text-xs text-slate-800 block truncate"
+                    >
+                      {{ school.etablissement }}
+                    </span>
+
+                    <span
+                      class="text-[9px] text-slate-400 font-medium"
+                    >
+                      {{ school.teamsCount }}
+                      équipes •
+
+                      {{ school.matchesPlayed }}
+                      M.J.
+                    </span>
+
+                  </div>
+
+                </div>
+
+                <!-- Points -->
+                <div class="text-right shrink-0">
+
+                  <span
+                    class="font-mono font-black text-slate-900 text-sm block"
+                  >
+                    {{ school.points }}
+                  </span>
+
+                  <span
+                    class="text-[9px] uppercase font-bold tracking-wider text-slate-400"
+                  >
+                    Points
+                  </span>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+          <div
+            class="bg-slate-50 p-3 rounded-xl border border-slate-150/40 text-[10px] text-slate-500 leading-normal italic"
+          >
+            💡 Chaque école universitaire cumule
+            les victoires de ses équipes rattachées.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

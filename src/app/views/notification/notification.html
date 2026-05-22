@@ -1,0 +1,314 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6 page-fade-enter">
+
+  <!-- Top Bar -->
+  <div
+    class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"
+  >
+
+    <!-- Search -->
+    <div class="relative flex-1 max-w-md w-full">
+
+      <lucide-angular
+        [img]="SearchIcon"
+        class="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4.5 w-4.5 text-slate-400"
+      ></lucide-angular>
+
+      <input
+        type="text"
+        placeholder="Rechercher des communiqués..."
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchChange()"
+        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm transition-all focus:bg-white"
+      />
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+
+      <select
+        [(ngModel)]="selectedType"
+        (change)="onTypeChange()"
+        class="p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-semibold focus:outline-none"
+      >
+        <option value="all">Toutes les notifications</option>
+        <option value="announcement">Communiqué officiel</option>
+        <option value="result">Scores & Résultats</option>
+        <option value="schedule">Programmes & Reports</option>
+        <option value="match_update">Feuilles de match</option>
+      </select>
+
+      <!-- Mark all read -->
+      <button
+        *ngIf="unreadCount > 0"
+        (click)="handleMarkAllRead()"
+        class="px-3.5 py-2 hover:bg-slate-100 text-slate-600 font-bold border border-slate-200 text-xs rounded-xl transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap"
+      >
+
+        <lucide-angular
+          [img]="CheckSquareIcon"
+          class="h-4 w-4"
+        ></lucide-angular>
+
+        <span>Tout marquer lu</span>
+      </button>
+
+      <!-- Create -->
+      <button
+        *ngIf="isAuthorizeToAnnounce"
+        (click)="isNotifOpen = true"
+        class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+      >
+
+        <lucide-angular
+          [img]="PlusCircleIcon"
+          class="h-4 w-4"
+        ></lucide-angular>
+
+        <span>Créer une annonce</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div
+    *ngIf="loading"
+    class="flex justify-center p-20"
+  >
+
+    <lucide-angular
+      [img]="RefreshCwIcon"
+      class="h-8 w-8 animate-spin text-purple-500"
+    ></lucide-angular>
+  </div>
+
+  <!-- Notifications -->
+  <div
+    *ngIf="!loading && filteredNotifs.length > 0"
+    class="space-y-4"
+  >
+
+    <div
+      *ngFor="let notif of filteredNotifs"
+      class="p-5 rounded-3xl border bg-white flex gap-4 relative overflow-hidden transition-all hover:shadow-md"
+      [ngClass]="
+        notif.isRead
+          ? 'border-slate-150'
+          : 'border-purple-300 ring-2 ring-purple-500/5'
+      "
+    >
+
+      <!-- New badge -->
+      <div
+        *ngIf="!notif.isRead"
+        class="absolute right-0 top-0 bg-purple-500 text-white text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider"
+      >
+        Nouveau Communiqué
+      </div>
+
+      <!-- Icon -->
+      <div
+        class="h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 border uppercase font-mono text-[10px] font-bold"
+        [ngClass]="getNotifIconStyle(notif.type)"
+      >
+
+        <lucide-angular
+          [img]="MegaphoneIcon"
+          class="h-5 w-5"
+        ></lucide-angular>
+      </div>
+
+      <!-- Body -->
+      <div class="flex-1 min-w-0 space-y-1">
+
+        <span
+          class="text-[9px] font-mono text-slate-400 font-semibold block"
+        >
+          COMMUNICATION IUSJ •
+          {{ notif.date | date:'short' }}
+        </span>
+
+        <h4
+          class="text-sm font-bold truncate pr-16"
+          [ngClass]="
+            notif.isRead
+              ? 'text-slate-800'
+              : 'text-slate-900 text-base'
+          "
+        >
+          {{ notif.title }}
+        </h4>
+
+        <p
+          class="text-xs text-slate-600 leading-relaxed font-medium"
+        >
+          {{ notif.content }}
+        </p>
+
+        <!-- Mark read -->
+        <button
+          *ngIf="!notif.isRead"
+          (click)="handleMarkAsRead(notif.id)"
+          class="mt-3 text-[10px] font-bold uppercase tracking-wider text-purple-600 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg px-2.5 py-1 transition-all inline-flex items-center gap-1 cursor-pointer"
+        >
+
+          <lucide-angular
+            [img]="CheckIcon"
+            class="h-3 w-3"
+          ></lucide-angular>
+
+          <span>Marquer comme lu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <div
+    *ngIf="!loading && filteredNotifs.length === 0"
+    class="text-center py-20 bg-white border border-slate-150 rounded-3xl p-6"
+  >
+
+    <lucide-angular
+      [img]="BellIcon"
+      class="h-12 w-12 text-slate-300 mx-auto stroke-1 mb-2"
+    ></lucide-angular>
+
+    <p class="text-sm font-semibold text-slate-500">
+      Aucune annonce trouvée dans le flux IUSJ Sports.
+    </p>
+  </div>
+
+  <!-- MODAL -->
+  <div
+    *ngIf="isNotifOpen"
+    class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4"
+  >
+
+    <div
+      class="bg-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-100 relative overflow-hidden page-fade-enter"
+    >
+
+      <!-- Header -->
+      <div
+        class="h-14 flex items-center justify-between px-6 border-b border-slate-100 bg-slate-50"
+      >
+
+        <span
+          class="font-bold text-slate-800 text-sm flex items-center gap-1.5"
+        >
+
+          <lucide-angular
+            [img]="MegaphoneIcon"
+            class="h-4.5 w-4.5 text-purple-500"
+          ></lucide-angular>
+
+          Publier une annonce officielle
+        </span>
+
+        <button
+          (click)="isNotifOpen = false"
+          class="p-1 rounded-md text-slate-400 hover:text-slate-600 transition-colors"
+        >
+
+          <lucide-angular
+            [img]="XIcon"
+            class="h-5 w-5"
+          ></lucide-angular>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <form
+        (ngSubmit)="handlePublishAnnouncement()"
+        class="p-6 space-y-4"
+      >
+
+        <!-- Title -->
+        <div>
+
+          <label
+            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"
+          >
+            Titre de l'annonce
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="title"
+            name="title"
+            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:bg-white rounded-xl text-sm font-semibold outline-none transition-all"
+            placeholder="Ex: Finale Coupe de Basket-ball remise d'un trophée"
+          />
+        </div>
+
+        <!-- Type -->
+        <div>
+
+          <label
+            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"
+          >
+            Type d'alerte ou Communiqué
+          </label>
+
+          <select
+            [(ngModel)]="type"
+            name="type"
+            class="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-xs font-semibold"
+          >
+            <option value="announcement">
+              📢 Communiqué Global / Flash
+            </option>
+
+            <option value="result">
+              🏆 Publication de Scores / Résultats
+            </option>
+
+            <option value="schedule">
+              📅 Changement Calendrier / Reports
+            </option>
+          </select>
+        </div>
+
+        <!-- Content -->
+        <div>
+
+          <label
+            class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"
+          >
+            Description / Message officiel
+          </label>
+
+          <textarea
+            rows="4"
+            [(ngModel)]="content"
+            name="content"
+            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-purple-500 focus:bg-white rounded-xl text-xs font-semibold outline-none transition-all"
+            placeholder="Écrivez le message destiné aux étudiants..."
+          ></textarea>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="border-t border-slate-100 pt-4 flex justify-end gap-2.5 animate-fade-in"
+        >
+
+          <button
+            type="button"
+            (click)="isNotifOpen = false"
+            class="px-4 py-2.5 text-xs font-semibold text-slate-500 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl cursor-pointer"
+          >
+            Annuler
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="saving"
+            class="px-5 py-2.5 text-xs font-bold text-white bg-purple-500 hover:bg-purple-600 rounded-xl shadow-lg cursor-pointer"
+          >
+            Publier l'annonce
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

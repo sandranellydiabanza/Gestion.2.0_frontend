@@ -1,0 +1,406 @@
+<div class="p-6 max-w-7xl mx-auto space-y-6 page-fade-enter">
+
+  <!-- Header -->
+  <div
+    class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"
+  >
+
+    <div class="relative flex-1 max-w-md">
+
+      <lucide-angular
+        [img]="SearchIcon"
+        class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-slate-400"
+      >
+      </lucide-angular>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Rechercher une équipe..."
+        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none"
+      />
+
+    </div>
+
+    <div class="flex items-center gap-2">
+
+      <select
+        [(ngModel)]="selectedSchool"
+        class="p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-semibold"
+      >
+
+        <option value="all">
+          Toutes les écoles
+        </option>
+
+        @for (sch of schools; track sch) {
+
+          <option [value]="sch">
+            {{ sch }}
+          </option>
+
+        }
+
+      </select>
+
+      @if (isSportManagementRole) {
+
+        <button
+          (click)="openAddTeamModal()"
+          class="px-4 py-2 font-bold text-xs text-white bg-sky-500 rounded-xl flex items-center gap-1.5"
+        >
+
+          <lucide-angular
+            [img]="PlusIcon"
+            class="h-4 w-4"
+          >
+          </lucide-angular>
+
+          <span>
+            Inscrire une équipe
+          </span>
+
+        </button>
+
+      }
+
+    </div>
+
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Teams -->
+    <div class="lg:col-span-2 space-y-4">
+
+      <h3
+        class="font-bold text-slate-800 text-sm flex items-center gap-2"
+      >
+
+        <lucide-angular
+          [img]="UsersIcon"
+          class="h-4.5 w-4.5 text-sky-500"
+        >
+        </lucide-angular>
+
+        Liste des équipes ({{ filteredTeams.length }})
+
+      </h3>
+
+      @if (loading) {
+
+        <div class="flex justify-center p-12">
+
+          <lucide-angular
+            [img]="Loader2Icon"
+            class="h-8 w-8 animate-spin text-sky-500"
+          >
+          </lucide-angular>
+
+        </div>
+
+      } @else if (filteredTeams.length > 0) {
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          @for (team of filteredTeams; track team.id) {
+
+            <div
+              (click)="selectTeam(team)"
+              class="p-5 rounded-3xl border bg-white shadow-sm cursor-pointer transition-all"
+              [class.border-sky-500]="activeTeam?.id === team.id"
+            >
+
+              <div class="space-y-3">
+
+                <div class="flex justify-between items-center">
+
+                  <span
+                    class="text-[10px] bg-slate-100 px-2.5 py-1 rounded-md text-slate-500 font-semibold"
+                  >
+                    {{ team.etablissement }}
+                  </span>
+
+                  <div
+                    class="h-2.5 w-2.5 rounded-full"
+                    [style.backgroundColor]="team.logoColor"
+                  >
+                  </div>
+
+                </div>
+
+                <div>
+
+                  <em
+                    class="text-[10px] font-mono text-sky-500 uppercase"
+                  >
+                    {{ team.filiere }}
+                  </em>
+
+                  <h4
+                    class="font-bold text-base text-slate-900"
+                  >
+                    {{ team.name }}
+                  </h4>
+
+                </div>
+
+                <div
+                  class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs"
+                >
+
+                  <lucide-angular
+                    [img]="StarIcon"
+                    class="h-4 w-4"
+                  >
+                  </lucide-angular>
+
+                  <span>
+                    Capitaine :
+                    <b>
+                      {{ team.captainName || 'Aucun' }}
+                    </b>
+                  </span>
+
+                </div>
+
+              </div>
+
+              <div
+                class="border-t border-slate-100 pt-3 mt-4 flex justify-between items-center"
+              >
+
+                <span class="text-xs text-slate-400">
+                  {{ team.playersCount }} joueurs
+                </span>
+
+                @if (isSportManagementRole) {
+
+                  <div class="flex gap-1">
+
+                    <button
+                      (click)="openEditTeamModal(team, $event)"
+                      class="p-1.5 rounded-md border border-slate-200"
+                    >
+
+                      <lucide-angular
+                        [img]="PencilIcon"
+                        class="h-3 w-3"
+                      >
+                      </lucide-angular>
+
+                    </button>
+
+                    <button
+                      (click)="handleDeleteTeam(team.id, $event)"
+                      class="p-1.5 rounded-md border border-slate-200"
+                    >
+
+                      <lucide-angular
+                        [img]="Trash2Icon"
+                        class="h-3 w-3"
+                      >
+                      </lucide-angular>
+
+                    </button>
+
+                  </div>
+
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+      } @else {
+
+        <div
+          class="text-center py-16 bg-white rounded-3xl border border-slate-150"
+        >
+
+          <lucide-angular
+            [img]="UsersIcon"
+            class="h-10 w-10 text-slate-300 mx-auto"
+          >
+          </lucide-angular>
+
+          <p class="text-sm font-semibold text-slate-500">
+            Aucune équipe trouvée.
+          </p>
+
+        </div>
+
+      }
+
+    </div>
+
+    <!-- Roster -->
+    <div>
+
+      <div
+        class="bg-white border border-slate-200 p-5 rounded-3xl shadow-sm space-y-5 sticky top-20 min-h-[400px]"
+      >
+
+        @if (activeTeam) {
+
+          <div class="space-y-4">
+
+            <div
+              class="border-b border-slate-100 pb-3 flex justify-between items-center"
+            >
+
+              <div>
+
+                <h3 class="font-bold text-slate-900 text-sm">
+                  {{ activeTeam.name }}
+                </h3>
+
+                <p class="text-[10px] text-slate-400">
+                  {{ activeTeam.etablissement }}
+                </p>
+
+              </div>
+
+              <div
+                class="h-4 w-4 rounded-full"
+                [style.backgroundColor]="activeTeam.logoColor"
+              >
+              </div>
+
+            </div>
+
+            <div class="space-y-2">
+
+              @for (player of activeRoster; track player.id) {
+
+                <div
+                  class="p-2.5 rounded-xl border flex justify-between items-center"
+                >
+
+                  <div class="flex items-center gap-2">
+
+                    <span
+                      class="font-mono font-bold text-sky-500"
+                    >
+                      #{{ player.number }}
+                    </span>
+
+                    <div>
+
+                      <span
+                        class="font-bold text-slate-800 block"
+                      >
+                        {{ player.firstName }}
+                        {{ player.lastName }}
+                      </span>
+
+                      <span
+                        class="text-[9px] text-slate-400"
+                      >
+                        {{ player.position }}
+                        •
+                        {{ player.className }}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                  @if (isSportManagementRole) {
+
+                    <div class="flex items-center gap-1">
+
+                      <button
+                        (click)="handleMakeCaptain(player)"
+                        class="p-1 rounded-md"
+                      >
+
+                        <lucide-angular
+                          [img]="StarIcon"
+                          class="h-3.5 w-3.5"
+                        >
+                        </lucide-angular>
+
+                      </button>
+
+                      <button
+                        (click)="handleDeletePlayer(player.id)"
+                        class="p-1 rounded-md"
+                      >
+
+                        <lucide-angular
+                          [img]="Trash2Icon"
+                          class="h-3.5 w-3.5"
+                        >
+                        </lucide-angular>
+
+                      </button>
+
+                    </div>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+            @if (isSportManagementRole) {
+
+              <button
+                (click)="openAddPlayerModal()"
+                class="w-full py-2.5 bg-slate-100 border border-slate-200 text-slate-600 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5"
+              >
+
+                <lucide-angular
+                  [img]="UserPlusIcon"
+                  class="h-4 w-4"
+                >
+                </lucide-angular>
+
+                <span>
+                  Ajouter un joueur
+                </span>
+
+              </button>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div
+            class="flex flex-col items-center justify-center text-center text-slate-400 h-full"
+          >
+
+            <lucide-angular
+              [img]="BookmarkIcon"
+              class="h-10 w-10 mb-2"
+            >
+            </lucide-angular>
+
+            <p class="text-xs font-bold uppercase">
+              Roster effectif
+            </p>
+
+            <p class="text-xs mt-1">
+              Sélectionnez une équipe.
+            </p>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
