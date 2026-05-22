@@ -1,0 +1,431 @@
+Voici la version professionnelle en anglais optimisée pour [Google AI Studio](https://aistudio.google.com?utm_source=chatgpt.com) et les IA de génération de code.
+Elle précise bien que le frontend doit être uniquement en Angular et non en React.
+
+Develop a modern university sports competition management web application for IUSJ (Institut Universitaire Saint-Jean).
+
+IMPORTANT:
+
+* The frontend MUST be developed ONLY with Angular 21 (or Angular 17 minimum).
+* DO NOT use React.
+* DO NOT use Next.js.
+* Use Angular standalone architecture.
+* Use TypeScript everywhere.
+* Backend API must use Django REST Framework.
+
+========================
+PROJECT OVERVIEW
+================
+
+Create a modern SaaS-style university sports management platform used to organize:
+
+* Interclass matches
+* Inter-department competitions
+* Tournaments
+* University sports events
+
+The platform must centralize:
+
+* Teams management
+* Players management
+* Match scheduling
+* Scores
+* Rankings
+* Notifications
+* Sports administration
+
+The platform is dedicated to IUSJ schools:
+
+* Saint Jean Ingénieur
+* Saint Jean School of Management
+* Prépa Vogt
+* CPGE
+* Prépa Saint Jean Douala
+
+Each team must belong to one school.
+
+========================
+TECH STACK
+==========
+
+FRONTEND:
+
+* Angular 21 (Angular 17 minimum)
+* Angular Standalone Components
+* Angular Router
+* Angular Signals if needed
+* TypeScript
+* Tailwind CSS
+* RxJS
+* Angular Reactive Forms
+* Angular Guards
+* Angular HTTP Interceptors
+* JWT Authentication
+* Lazy Loading
+* SPA Architecture
+
+BACKEND:
+
+* Django
+* Django REST Framework
+* JWT Authentication
+* REST API
+
+DATABASE:
+
+* PostgreSQL or MySQL
+
+========================
+APPLICATION REQUIREMENTS
+========================
+
+* Responsive web application
+* Modern UI/UX
+* MVC architecture
+* Professional university design
+* Mobile / tablet / desktop support
+* Mock data before backend integration
+* Reusable Angular components
+* Modular architecture
+* Clean and scalable codebase
+
+========================
+COLOR THEME
+===========
+
+Main colors:
+
+* Sky blue
+* Green
+* White
+
+The interface must look modern, clean, sporty, and professional.
+
+========================
+VISUAL IDENTITY
+===============
+
+Official university abbreviation:
+IUSJ
+
+Use:
+"IUSJ Sports"
+
+as the main branding of the application.
+
+Display "IUSJ Sports" in:
+
+* Navbar
+* Login page
+* Dashboard
+* Footer
+* Statistics cards
+
+========================
+ANGULAR PROJECT STRUCTURE
+=========================
+
+Organize the Angular project like this:
+
+src/app/
+│
+├── core/
+│   ├── services/
+│   ├── guards/
+│   ├── interceptors/
+│   ├── models/
+│   └── auth/
+│
+├── shared/
+│   ├── components/
+│   ├── directives/
+│   ├── pipes/
+│   └── layouts/
+│
+├── features/
+│   ├── dashboard/
+│   ├── competitions/
+│   ├── teams/
+│   ├── matches/
+│   ├── players/
+│   ├── referees/
+│   ├── rankings/
+│   ├── notifications/
+│   └── auth/
+│
+└── app.routes.ts
+
+========================
+AUTHENTICATION & ROLES
+======================
+
+Implement JWT Authentication with:
+
+* Login
+* Register
+* Logout
+* Token storage
+* HTTP Interceptor
+* AuthGuard
+* Role-based access control
+
+Available roles:
+
+* Admin
+* Sports Manager
+* Team Captain
+* Student
+
+IMPORTANT ROLE RULES:
+
+* Every new user registering on the platform must automatically receive the "Student" role by default.
+* Only the Admin can change user roles.
+* Admin accounts must NOT be created from Angular frontend.
+* Admin users must be created manually from Django Admin Panel only.
+* Role management must be secured.
+
+========================
+FEATURES
+========
+
+1. Competition Management
+
+* Create competition
+* Edit competition
+* Delete competition
+* Competition types:
+
+  * League
+  * Cup
+  * Knockout tournament
+* Competition dates
+* Match rules
+
+2. Team Management
+
+* Create team
+* Assign school
+* Assign captain
+* Add/remove players
+
+Schools:
+
+* Saint Jean Ingénieur
+* Saint Jean School of Management
+* Prépa Vogt
+* CPGE
+* Prépa Saint Jean Douala
+
+3. Player Management
+
+* First name
+* Last name
+* Jersey number
+* Position
+* Class
+* Player photo
+
+4. Match Scheduling
+
+* Automatic schedule generation
+* Stadium/field assignment
+* Referee assignment
+* Match rescheduling
+* Postponed matches
+
+5. Match Management
+
+* Record scores
+* Yellow/red cards
+* Match validation
+* Match history
+
+6. Automatic Rankings
+
+* Automatic points calculation
+* Goal difference
+* Wins count
+* Real-time ranking updates
+* Inter-school rankings
+
+7. Notifications
+
+* Match reminders
+* Schedule changes
+* Match results
+* Official announcements
+
+8. Dashboard
+
+* Total teams
+* Total matches
+* Upcoming matches
+* General statistics
+* School statistics
+* Matches per school
+
+9. Security
+
+* Role management
+* Protected routes
+* Permissions system
+* Activity logs
+
+========================
+UI COMPONENTS
+=============
+
+Create a modern Angular UI with:
+
+* Sidebar
+* Navbar
+* Dashboard cards
+* Tables
+* Charts
+* Modals
+* Toast notifications
+* Loaders / Spinners
+* Empty states
+* Responsive layouts
+* Tailwind animations
+
+Use:
+
+* Heroicons
+  or
+* Lucide Icons
+
+========================
+ROUTING
+=======
+
+Configure Angular routing with:
+
+* Lazy loading
+* Public routes
+* Private routes
+* AuthGuard
+
+Routes example:
+
+/login
+/register
+/dashboard
+/competitions
+/teams
+/players
+/matches
+/rankings
+/notifications
+/profile
+
+========================
+FORMS
+=====
+
+All forms must use:
+
+* Angular Reactive Forms
+* Form validation
+* Dynamic error messages
+* Strong typing
+
+========================
+SERVICES
+========
+
+All API calls must go through Angular services.
+
+Create:
+
+* auth.service.ts
+* competition.service.ts
+* team.service.ts
+* player.service.ts
+* match.service.ts
+* ranking.service.ts
+* notification.service.ts
+
+========================
+MOCK DATA
+=========
+
+Before backend integration:
+
+* Use JSON mock data
+* Simulate API calls
+* Use RxJS of() and delay()
+
+Create realistic mock data for:
+
+* Teams
+* Matches
+* Players
+* Competitions
+* Schools
+
+========================
+PAGES
+=====
+
+Create:
+
+* Login page
+* Register page
+* Dashboard
+* Competitions page
+* Teams page
+* Players page
+* Matches page
+* Rankings page
+* Notifications page
+* User profile
+* Settings page
+* 404 page
+
+========================
+LOADING STATES
+==============
+
+Display:
+
+* Spinners
+* Skeleton loaders
+* Loading indicators
+
+during all API requests.
+
+========================
+BEST PRACTICES
+==============
+
+* Clean Architecture
+* Reusable components
+* Dependency Injection
+* Type-safe code
+* Strict TypeScript
+* Scalable architecture
+* Separation of concerns
+* Maintainable codebase
+
+========================
+EXPECTED OUTPUT
+===============
+
+Generate:
+
+1. Full Angular project structure
+2. Tailwind CSS configuration
+3. Angular routing configuration
+4. JWT Authentication system
+5. Guards and Interceptors
+6. Angular services
+7. TypeScript interfaces
+8. Mock data
+9. Modern UI pages
+10. Dashboard
+11. Reusable Angular components
+12. Example Django API integration
+13. Responsive layouts
+14. Role-based access system
+
+The final result must look like a professional modern university sports SaaS platform built entirely with Angular and Tailwind CSS.

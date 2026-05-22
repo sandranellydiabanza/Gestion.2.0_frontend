@@ -1,0 +1,33 @@
+import { AuditLogs} from './views/audit-logs/audit-logs'
+import {Dashboard} from './views/dashboard/dashboard'
+import {Matches } from './views/matches/matches'
+import {Notification} from './views/notification/notification'
+import {Players} from './views/players/players'
+import {Profile } from './views/profile/profile'
+import {Competition } from './views/competition/competition'
+import {Rankings } from './views/rankings/rankings'
+import {Team } from './views/team/team'
+ {
+    path: 'auditlogs',
+    component: AuditLogs },
+    {
+    path: 'dashboard',
+    component: Dashboard },
+    {
+    path: 'matches',
+    component: Matches },
+     {
+    path: 'players',
+    component: Players },
+     {
+    path: 'profile',
+    component: Profile },
+    {
+    path: 'competition',
+    component: Competition },
+    {
+    path: 'rankings',
+    component: Rankings },
+    {
+    path: 'team', 
+    component: Team },
