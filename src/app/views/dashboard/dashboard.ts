@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input ,inject} from '@angular/core';
+import {Equipeservice} from '../../services/equipe/equipeservice';
+import { Matchservice } from '../../services/match/matchservice';
+import { Competitionservice } from '../../services/competition/competitionservice';
+import { Classementservice } from '../../services/classement/classementservice';
 import { FormsModule } from '@angular/forms';
 import {
   Activity,
@@ -12,20 +16,25 @@ import {
   Clock,
   MapPin,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  LucideAngularModule
 } from 'lucide-angular';
+import { Competition, EtablissementStanding, Match, Team } from '../../types/types';
 
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule , FormsModule],
+  imports: [LucideAngularModule,CommonModule , FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
 
-
+private EquipeService = inject(Equipeservice);
+private MatchService = inject(Matchservice);
+private CompetitionService = inject(Competitionservice);
+private ClassementService = inject(Classementservice);
   @Input() onNavigate!: (route: string) => void;
   @Input() showToast!: (msg: string, type: 'success' | 'error') => void;
 
@@ -64,10 +73,10 @@ export class Dashboard {
         allCompetitions,
         standings
       ] = await Promise.all([
-        EquipeService.getAllTeams(),
-        MatchService.getAllMatches(),
-        CompetitionService.getAllCompetitions(),
-        ClassementService.getInterEcolesStandings()
+        this.EquipeService.getAllTeams(),
+        this.MatchService.getAllMatches(),
+        this.CompetitionService.getAllCompetitions(),
+        this.ClassementService.getInterEcolesStandings()
       ]);
 
       this.teams = allTeams;

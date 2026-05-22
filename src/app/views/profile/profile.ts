@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input,inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   User as UserIcon,
@@ -7,22 +7,27 @@ import {
   Key,
   Eye,
   EyeOff,
-  RefreshCw
+  RefreshCw,
+  LucideAngularModule
 } from 'lucide-angular';
 
-import { User, Etablissement } from '../types';
-import {Loginservice } from '../services/auth.service';
+import { User, Etablissement } from '../../types/types';
+import {Loginservice } from '../../services/auth/login/loginservice';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule , FormsModule],
+  imports: [LucideAngularModule,CommonModule , FormsModule],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
 export class Profile {
-
+private Loginservice = inject(Loginservice);
 
   @Input() currentUser: User | null = null;
+ @Input() showToast: (
+    msg: string,
+    type: 'success' | 'error'
+  ) => void = () => {};
 
   firstName = '';
   lastName = '';
@@ -57,7 +62,7 @@ export class Profile {
   }
 
   get jwtToken(): string {
-    returnLoginservice.getToken() || 'No token found';
+    return this.Loginservice.getToken() || 'No token found';
   }
 
   get parts(): string[] {
@@ -81,7 +86,7 @@ export class Profile {
     this.updating = true;
 
     try {
-      const updated = awaitLoginservice.updateProfile(
+      const updated = await this.Loginservice.updateProfile(
         this.firstName,
         this.lastName,
         this.school
@@ -101,3 +106,4 @@ export class Profile {
 
     }
   }
+}

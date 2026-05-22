@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component,inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Search , UserCheck ,User} from 'lucide-angular';
+import { Search , UserCheck ,User, LucideAngularModule} from 'lucide-angular';
 
-import { Player, Team } from '../types';
-import { EquipeService } from '../services/equipe.service';
+import { Player, Team } from '../../types/types';
+import { Equipeservice } from '../../services/equipe/equipeservice';
 @Component({
   selector: 'app-players',
-  imports: [CommonModule , FormsModule],
+  imports: [CommonModule , FormsModule,LucideAngularModule],
   templateUrl: './players.html',
   styleUrl: './players.css',
 })
@@ -16,6 +16,7 @@ export class Players {
   readonly SearchIcon = Search;
   readonly UserCheckIcon = UserCheck;
   readonly UserIcon = User;
+private Equipeservice = inject(Equipeservice);
 
   players: Player[] = [];
   teams: Team[] = [];
@@ -25,8 +26,8 @@ export class Players {
 
   async ngOnInit(): Promise<void> {
     const [allPlayers, allTeams] = await Promise.all([
-      EquipeService.getAllPlayers(),
-      EquipeService.getAllTeams()
+     this.Equipeservice.getAllPlayers(),
+      this.Equipeservice.getAllTeams()
     ]);
 
     this.players = allPlayers;

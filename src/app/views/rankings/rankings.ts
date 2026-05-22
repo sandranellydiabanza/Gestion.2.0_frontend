@@ -1,31 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component,inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Award,
   Trophy,
   RefreshCw,
   BarChart3,
-  ShieldAlert
+  ShieldAlert,
+  LucideAngularModule
 } from 'lucide-angular';
 
 import {
   Standing,
   EtablissementStanding,
   Competition
-} from '../types';
+} from '../../types/types';
 
-import { CompetitionService } from '../services/competition.service';
-import { ClassementService } from '../services/classement.service';
+import { Competitionservice } from '../../services/competition/competitionservice';
+import { Classementservice } from '../../services/classement/classementservice';
 
 @Component({
   selector: 'app-rankings',
-  imports: [CommonModule ,FormsModule],
+  imports: [LucideAngularModule,CommonModule ,FormsModule],
   templateUrl: './rankings.html',
   styleUrl: './rankings.css',
 })
 export class Rankings{
+   @Input() showToast: (
+    msg: string,
+    type: 'success' | 'error'
+  ) => void = () => {};
 
+ private Competitionservice = inject(Competitionservice);
+ private Classementservice = inject(Classementservice);
 
   readonly AwardIcon = Award;
   readonly TrophyIcon = Trophy;
@@ -53,8 +60,8 @@ export class Rankings{
     try {
 
       const [allComps, interSchool] = await Promise.all([
-        CompetitionService.getAllCompetitions(),
-        ClassementService.getInterEcolesStandings()
+        this.Competitionservice.getAllCompetitions(),
+        this.Classementservice.getInterEcolesStandings()
       ]);
 
       this.competitions = allComps;
@@ -93,7 +100,7 @@ export class Rankings{
     try {
 
       const standings =
-        await ClassementService.getStandings(
+        await this.Classementservice.getStandings(
           this.selectedCompId
         );
 

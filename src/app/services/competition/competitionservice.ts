@@ -1,11 +1,9 @@
-import { Injectable ,inject} from '@angular/core';
+import { Injectable } from '@angular/core';
  import { Loginservice } from '../auth/login/loginservice'; 
 
 import {
   Competition,
-  CompetitionStatus,
-  CompetitionType,
-  SportType
+ 
 } from '../../types/types';
 
 import {
@@ -17,13 +15,12 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class CompetitionService {
+export class Competitionservice {
   // public deleteCompetition(id:number){
     
   // }
-  private authService = inject(Loginservice);
-
-  constructor(
+constructor(
+    public authService: Loginservice
   ) {}
 
   async getAllCompetitions(): Promise<Competition[]> {

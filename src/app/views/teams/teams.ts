@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input,inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import{
+  LucideAngularModule,
   Users,
   Plus,
   Pencil,
@@ -19,19 +20,23 @@ import {
   Player,
   Etablissement,
   User as LoggedUser
-} from '../types';
+} from '../../types/types';
 
-import { EquipeService } from '../services/equipe.service';
-
+import { Equipeservice } from '../../services/equipe/equipeservice';
 
 @Component({
-  selector: 'app-team',
-  imports: [CommonModule,FormsModule],
-  templateUrl: './team.html',
-  styleUrl: './team.css',
+  selector: 'app-teams',
+  imports: [LucideAngularModule,CommonModule,FormsModule],
+  templateUrl: './teams.html',
+  styleUrl: './teams.css',
 })
-export class Team {
-
+export class Teams {
+  
+private Equipeservice = inject(Equipeservice);
+ @Input() showToast: (
+    msg: string,
+    type: 'success' | 'error'
+  ) => void = () => {};
 
   @Input() currentUser: LoggedUser | null = null;
 
@@ -101,8 +106,8 @@ export class Team {
     try {
 
       const [allTeams, allPlayers] = await Promise.all([
-        EquipeService.getAllTeams(),
-        EquipeService.getAllPlayers()
+        this.Equipeservice.getAllTeams(),
+        this.Equipeservice.getAllPlayers()
       ]);
 
       this.teams = allTeams;
@@ -180,7 +185,7 @@ export class Team {
 
       if (this.editTeam) {
 
-        await EquipeService.updateTeam(
+        await this.Equipeservice.updateTeam(
           this.editTeam.id,
           {
             name: this.teamName,
@@ -192,7 +197,7 @@ export class Team {
 
       } else {
 
-        await EquipeService.createTeam({
+        await this.Equipeservice.createTeam({
           name: this.teamName,
           etablissement: this.school,
           filiere: this.filiere,
@@ -227,7 +232,7 @@ export class Team {
 
     try {
 
-      await EquipeService.deleteTeam(id);
+      await this.Equipeservice.deleteTeam(id);
 
       if (this.activeTeam?.id === id) {
         this.activeTeam = null;
@@ -276,7 +281,7 @@ export class Team {
 
       if (this.editPlayer) {
 
-        await EquipeService.updatePlayer(
+        await this.Equipeservice.updatePlayer(
           this.editPlayer.id,
           {
             firstName: this.pFirstName,
@@ -289,7 +294,7 @@ export class Team {
 
       } else {
 
-        await EquipeService.addPlayer({
+        await this.Equipeservice.addPlayer({
           firstName: this.pFirstName,
           lastName: this.pLastName,
           number: this.pNumber,
@@ -321,7 +326,7 @@ export class Team {
 
     try {
 
-      await EquipeService.removePlayer(id);
+      await this.Equipeservice.removePlayer(id);
 
       await this.loadData();
 
@@ -338,7 +343,7 @@ export class Team {
 
     try {
 
-      await EquipeService.updateTeam(
+      await this.Equipeservice.updateTeam(
         this.activeTeam.id,
         {
           captainId: player.id,
@@ -362,3 +367,4 @@ export class Team {
 
     }
   }
+}

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideAngularModule, Menu, Bell } from 'lucide-angular';
-import{
+
+import {
+  LucideAngularModule,
   Bell,
   Search,
   PlusCircle,
@@ -10,36 +11,36 @@ import{
   CheckSquare,
   Megaphone,
   RefreshCw,
-  
+  X
 } from 'lucide-angular';
 
 import {
   SportNotification,
   NotificationType,
   User
-} from '../types';
+} from '../../types/types';
 
-import { NotificationService } from '../services/notification.service';
-
-
+import { Notificationservice } from '../../services/notification/notificationservice';
 
 @Component({
   selector: 'app-notification',
-  imports: [CommonModule ,FormsModule,LucideAngularModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './notification.html',
-  styleUrl: './notification.css',
+  styleUrls: ['./notification.css']
 })
-export class Notification {
-
+export class Notifications implements OnInit {
 
   @Input() currentUser: User | null = null;
 
-  @Input() onRefreshNotificationsCount!: () => void;
+  @Input() onRefreshNotificationsCount: () => void = () => {};
 
-  @Input() showToast!: (
+  @Input() showToast: (
     msg: string,
     type: 'success' | 'error'
-  ) => void;
+  ) => void = () => {};
+
+  private notificationService = inject(Notificationservice);
 
   notifications: SportNotification[] = [];
   filteredNotifs: SportNotification[] = [];
@@ -49,7 +50,6 @@ export class Notification {
   search = '';
   selectedType = 'all';
 
-  // Modal creation
   isNotifOpen = false;
 
   title = '';
@@ -59,6 +59,7 @@ export class Notification {
 
   saving = false;
 
+  // Icons
   readonly BellIcon = Bell;
   readonly SearchIcon = Search;
   readonly PlusCircleIcon = PlusCircle;
@@ -67,10 +68,6 @@ export class Notification {
   readonly MegaphoneIcon = Megaphone;
   readonly RefreshCwIcon = RefreshCw;
   readonly XIcon = X;
-
-  constructor(
-    private notificationService: NotificationService
-  ) {}
 
   ngOnInit(): void {
     this.loadNotifications();
@@ -87,34 +84,47 @@ export class Notification {
     return this.notifications.filter(n => !n.isRead).length;
   }
 
-  async loadNotifications(): Promise<void> {
+  loadNotifications(): void {
+
     this.loading = true;
 
-    try {
-      const data =
-        await this.notificationService.getAllNotifications();
+    this.notificationService.getAllNotifications().subscribe({
 
-      this.notifications = data;
+      next: (data) => {
 
-      this.applyFilters();
+        this.notifications = data;
 
-      this.onRefreshNotificationsCount();
-    } catch {
-      this.showToast(
-        'Impossible de recharger les annonces',
-        'error'
-      );
-    } finally {
-      this.loading = false;
-    }
+        this.applyFilters();
+
+        this.onRefreshNotificationsCount();
+
+        this.loading = false;
+      },
+
+      error: () => {
+
+        this.showToast(
+          'Impossible de recharger les annonces',
+          'error'
+        );
+
+        this.loading = false;
+      }
+    });
   }
 
   applyFilters(): void {
+
     this.filteredNotifs = this.notifications.filter((n) => {
 
       const matchesSearch =
-        n.title.toLowerCase().includes(this.search.toLowerCase()) ||
-        n.content.toLowerCase().includes(this.search.toLowerCase());
+        (n.title ?? '')
+          .toLowerCase()
+          .includes(this.search.toLowerCase()) ||
+
+        (n.content ?? '')
+          .toLowerCase()
+          .includes(this.search.toLowerCase());
 
       const matchesFilter =
         this.selectedType === 'all' ||
@@ -132,48 +142,58 @@ export class Notification {
     this.applyFilters();
   }
 
-  async handleMarkAsRead(id: string): Promise<void> {
-    try {
-      const updated =
-        await this.notificationService.markAsRead(id);
+  handleMarkAsRead(id: string): void {
 
-      this.notifications = updated;
+    this.notificationService.markAsRead(id).subscribe({
 
-      this.applyFilters();
+      next: (updated) => {
 
-      this.onRefreshNotificationsCount();
+        this.notifications = updated;
 
-    } catch {
-      this.showToast(
-        'Erreur lors du marquage comme lu',
-        'error'
-      );
-    }
+        this.applyFilters();
+
+        this.onRefreshNotificationsCount();
+      },
+
+      error: () => {
+
+        this.showToast(
+          'Erreur lors du marquage comme lu',
+          'error'
+        );
+      }
+    });
   }
 
-  async handleMarkAllRead(): Promise<void> {
-    try {
+  handleMarkAllRead(): void {
 
-      const updated =
-        await this.notificationService.markAllAsRead();
+    this.notificationService.markAllAsRead().subscribe({
 
-      this.notifications = updated;
+      next: (updated) => {
 
-      this.applyFilters();
+        this.notifications = updated;
 
-      this.onRefreshNotificationsCount();
+        this.applyFilters();
 
-      this.showToast(
-        'Tous les messages ont été marqués comme lus',
-        'success'
-      );
+        this.onRefreshNotificationsCount();
 
-    } catch {
-      this.showToast('Erreur', 'error');
-    }
+        this.showToast(
+          'Tous les messages ont été marqués comme lus',
+          'success'
+        );
+      },
+
+      error: () => {
+
+        this.showToast(
+          'Erreur lors du marquage',
+          'error'
+        );
+      }
+    });
   }
 
-  async handlePublishAnnouncement(): Promise<void> {
+  handlePublishAnnouncement(): void {
 
     if (!this.title.trim() || !this.content.trim()) {
 
@@ -187,36 +207,39 @@ export class Notification {
 
     this.saving = true;
 
-    try {
+    this.notificationService.createNotification({
+      title: this.title,
+      content: this.content,
+      type: this.type
+    }).subscribe({
 
-      await this.notificationService.createNotification({
-        title: this.title,
-        content: this.content,
-        type: this.type
-      });
+      next: () => {
 
-      this.showToast(
-        'Votre annonce académique a été publiée !',
-        'success'
-      );
+        this.showToast(
+          'Votre annonce académique a été publiée !',
+          'success'
+        );
 
-      this.isNotifOpen = false;
+        this.isNotifOpen = false;
 
-      this.title = '';
-      this.content = '';
+        this.title = '';
+        this.content = '';
 
-      await this.loadNotifications();
+        this.loadNotifications();
 
-    } catch {
+        this.saving = false;
+      },
 
-      this.showToast(
-        'Erreur de publication de l’annonce',
-        'error'
-      );
+      error: () => {
 
-    } finally {
-      this.saving = false;
-    }
+        this.showToast(
+          'Erreur de publication de l’annonce',
+          'error'
+        );
+
+        this.saving = false;
+      }
+    });
   }
 
   getNotifIconStyle(type: NotificationType): string {

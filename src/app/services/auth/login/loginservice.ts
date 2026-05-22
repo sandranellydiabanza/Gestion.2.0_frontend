@@ -1,5 +1,5 @@
-import { Injectable ,inject} from '@angular/core';
-
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { User, UserRole, Etablissement } from '../../../types/types';
 import { getMockUsers, apiSimulate, logAction } from '../../../test/mockData';
 
@@ -11,18 +11,15 @@ export const AUTH_USER_KEY = 'iusj_sports_user';
 })
 export class Loginservice {
 
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
-  constructor() {}
-
-  // Simulate login
-  async login(
-    email: string,
-    role: UserRole
-  ): Promise<{ token: string; user: User }> {
+  // ---------------- LOGIN ----------------
+  async login(email: string, role: UserRole): Promise<{ token: string; user: User }> {
 
     const users = getMockUsers();
 
-    // Find or simulate user matching the criteria
     let user = users.find(
       u =>
         u.email.toLowerCase() === email.toLowerCase() ||
@@ -34,52 +31,34 @@ export class Loginservice {
 
     if (!user) {
 
-      // Create user on-the-fly to prevent blocking development
       const nameParts = email.split('@')[0].split('.');
-
-      const firstName = nameParts[0]
-        ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1)
-        : 'Utilisateur';
-
-      const lastName = nameParts[1]
-        ? nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1)
-        : 'IUSJ';
 
       user = {
         id: `user-${Date.now()}`,
         email,
-        firstName,
-        lastName,
+        firstName: nameParts[0] || 'Utilisateur',
+        lastName: nameParts[1] || 'IUSJ',
         role,
-        etablissement:
-          role !== 'Administrateur'
-            ? 'Saint Jean Ingénieur'
-            : undefined,
+        etablissement: role !== 'Administrateur' ? 'Saint Jean Ingénieur' : undefined,
         avatarUrl:
           'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop'
       };
 
-      // Save new user
       const currentUsers = [...getMockUsers(), user];
 
-      localStorage.setItem(
-        'iusj_sports_users',
-        JSON.stringify(currentUsers)
-      );
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('iusj_sports_users', JSON.stringify(currentUsers));
+      }
     }
 
-    // Generate mock JWT token
     const mockToken =
       `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.` +
       `${btoa(JSON.stringify(user))}.signature_iusj`;
 
-    // Save to localStorage
-    localStorage.setItem(AUTH_TOKEN_KEY, mockToken);
-
-    localStorage.setItem(
-      AUTH_USER_KEY,
-      JSON.stringify(user)
-    );
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(AUTH_TOKEN_KEY, mockToken);
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    }
 
     logAction(
       user.id,
@@ -88,20 +67,19 @@ export class Loginservice {
       'Authentification utilisateur réussie (Session JWT simulée)'
     );
 
-    return apiSimulate({
-      token: mockToken,
-      user
-    });
+    return apiSimulate({ token: mockToken, user });
   }
 
-  // Get current logged-in user
+  // ---------------- GET USER ----------------
   getCurrentUser(): User | null {
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
 
     const userStr = localStorage.getItem(AUTH_USER_KEY);
 
-    if (!userStr) {
-      return null;
-    }
+    if (!userStr) return null;
 
     try {
       return JSON.parse(userStr);
@@ -110,22 +88,23 @@ export class Loginservice {
     }
   }
 
-  // Get current simulated JWT token
+  // ---------------- TOKEN ----------------
   getToken(): string | null {
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
     return localStorage.getItem(AUTH_TOKEN_KEY);
   }
 
-  // Check if authenticated
+  // ---------------- AUTH CHECK ----------------
   isAuthenticated(): boolean {
     return !!this.getToken() && !!this.getCurrentUser();
   }
 
-  // Update user profile info
-  async updateProfile(
-    firstName: string,
-    lastName: string,
-    etablissement: Etablissement
-  ): Promise<User> {
+  // ---------------- UPDATE PROFILE ----------------
+  async updateProfile(firstName: string, lastName: string, etablissement: Etablissement): Promise<User> {
 
     const currentUser = this.getCurrentUser();
 
@@ -137,24 +116,17 @@ export class Loginservice {
     currentUser.lastName = lastName;
     currentUser.etablissement = etablissement;
 
-    localStorage.setItem(
-      AUTH_USER_KEY,
-      JSON.stringify(currentUser)
-    );
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(currentUser));
 
-    // Update in database users list
-    const users = getMockUsers();
+      const users = getMockUsers();
 
-    const updatedUsers = users.map(u =>
-      u.id === currentUser.id
-        ? currentUser
-        : u
-    );
+      const updatedUsers = users.map(u =>
+        u.id === currentUser.id ? currentUser : u
+      );
 
-    localStorage.setItem(
-      'iusj_sports_users',
-      JSON.stringify(updatedUsers)
-    );
+      localStorage.setItem('iusj_sports_users', JSON.stringify(updatedUsers));
+    }
 
     logAction(
       currentUser.id,
@@ -166,7 +138,7 @@ export class Loginservice {
     return apiSimulate(currentUser);
   }
 
-  // Logout
+  // ---------------- LOGOUT ----------------
   logout(): void {
 
     const currentUser = this.getCurrentUser();
@@ -180,19 +152,16 @@ export class Loginservice {
       );
     }
 
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    localStorage.removeItem(AUTH_USER_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(AUTH_USER_KEY);
+    }
   }
 
-  // Simulates router guard check
-  checkPermission(
-    role: UserRole | undefined,
-    requiredRoles: UserRole[]
-  ): boolean {
+  // ---------------- PERMISSION ----------------
+  checkPermission(role: UserRole | undefined, requiredRoles: UserRole[]): boolean {
 
-    if (!role) {
-      return false;
-    }
+    if (!role) return false;
 
     return requiredRoles.includes(role);
   }

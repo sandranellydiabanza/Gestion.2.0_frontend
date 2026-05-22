@@ -1,4 +1,4 @@
-import { Injectable ,inject} from '@angular/core';
+import { Injectable } from '@angular/core';
 import{
   Standing,
   EtablissementStanding
@@ -13,9 +13,8 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class Classement {
-
-
+export class Classementservice {
+  
   constructor() {}
 
   async getStandings(

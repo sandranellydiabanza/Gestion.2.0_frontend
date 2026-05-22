@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component ,inject, Input} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Calendar,
@@ -13,25 +13,32 @@ import {
   ChevronDown,
   X,
   UserCheck,
-  AlertTriangle,
   Loader2,
-  Bookmark,
-  PlusCircle,
-  TrendingUp,
-  RefreshCw
+  
+  RefreshCw,
+  LucideAngularModule
 } from 'lucide-angular';
+import { Competition, Match, MatchStatus, Team,Player } from '../../types/types';
+import { Classementservice } from '../../services/classement/classementservice';
+import { Equipeservice } from '../../services/equipe/equipeservice';
+import { Matchservice } from '../../services/match/matchservice';
+import { Competitionservice } from '../../services/competition/competitionservice';
+import { Notificationservice } from '../../services/notification/notificationservice';
 
-import {
 
 @Component({
   selector: 'app-matches',
-  imports: [CommonModule ,FormsModule],
+  imports: [LucideAngularModule,CommonModule ,FormsModule],
   templateUrl: './matches.html',
   styleUrl: './matches.css',
 })
 export class Matches {
 
-
+private MatchService = inject(Matchservice);
+private EquipeService = inject(Equipeservice);
+private ClassementService = inject(Classementservice);
+private notificationService = inject(Notificationservice);
+private competitionService = inject(Competitionservice);
   @Input() currentUser: any;
 
   @Input() showToast!: (
@@ -94,10 +101,7 @@ export class Matches {
   readonly RefreshCw = RefreshCw;
 
   constructor(
-    private matchService: MatchService,
-    private competitionService: CompetitionService,
-    private equipeService: EquipeService,
-    private notificationService: NotificationService
+  
   ) {}
 
   ngOnInit(): void {
@@ -131,9 +135,9 @@ export class Matches {
     try {
       const [allMatches, allCompetitions, allTeams] =
         await Promise.all([
-          this.matchService.getAllMatches(),
+          this.MatchService.getAllMatches(),
           this.competitionService.getAllCompetitions(),
-          this.equipeService.getAllTeams()
+          this.EquipeService.getAllTeams()
         ]);
 
       this.matches = allMatches;
@@ -155,8 +159,8 @@ export class Matches {
   }
 
   async loadPlayers(match: Match): Promise<void> {
-    const playersA = await this.equipeService.getPlayersByTeam(match.teamAId);
-    const playersB = await this.equipeService.getPlayersByTeam(match.teamBId);
+    const playersA = await this.EquipeService.getPlayersByTeam(match.teamAId);
+    const playersB = await this.EquipeService.getPlayersByTeam(match.teamBId);
 
     this.activeScorersList = [...playersA, ...playersB];
 
@@ -188,7 +192,7 @@ export class Matches {
 
     try {
 
-      await this.matchService.updateMatch(
+      await this.MatchService.updateMatch(
         this.selectedMatch.id,
         {
           scoreA: Number(this.scoreA),
@@ -238,7 +242,7 @@ export class Matches {
 
     try {
 
-      await this.matchService.addGoal(
+      await this.MatchService.addGoal(
         this.selectedMatch.id,
         {
           scorerId: scorer.id,
@@ -281,7 +285,7 @@ export class Matches {
 
     try {
 
-      await this.matchService.addCard(
+      await this.MatchService.addCard(
         this.selectedMatch.id,
         {
           playerId: player.id,
@@ -329,7 +333,7 @@ export class Matches {
 
     try {
 
-      await this.matchService.updateMatch(
+      await this.MatchService.updateMatch(
         this.selectedMatch.id,
         {
           date: this.matchDate,
@@ -406,7 +410,7 @@ export class Matches {
 
     try {
 
-      await this.matchService.generateAutoSchedule(
+      await this.MatchService.generateAutoSchedule(
         this.genCompetitionId,
         comp.name,
         participatingTeams,

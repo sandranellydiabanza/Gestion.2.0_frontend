@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,10 @@ type UserRole =
   styleUrl: './login.css',
 })
 export class Login {
+ @Input() showToast: (
+    msg: string,
+    type: 'success' | 'error'
+  ) => void = () => {};
 
 
 

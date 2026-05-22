@@ -12,10 +12,11 @@ import {Loginservice } from '../../services/auth/login/loginservice';
 @Injectable({
   providedIn: 'root',
 })
-export class Equipe {
-private authService = inject(Loginservice);
+export class Equipeservice {
+constructor(
+    public authService: Loginservice
+  ) {}
 
-  constructor() {}
 
   // =========================
   // ======= TEAMS ===========

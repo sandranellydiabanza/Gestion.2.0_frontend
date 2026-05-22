@@ -9,9 +9,8 @@ import { getMockNotifications } from '../../test/mockData';
 @Injectable({
   providedIn: 'root',
 })
-export class Notification {
-
-
+export class Notificationservice {
+  
   private readonly STORAGE_KEY = 'iusj_sports_notifications';
 
   constructor() {}
