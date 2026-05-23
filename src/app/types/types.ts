@@ -10,7 +10,7 @@ export type Etablissement =
   | 'CPGE'
   | 'Prépa Saint Jean Douala';
 
-export type UserRole = 'Administrateur' | 'Responsable sportif' | 'Capitaine d’équipe' | 'Étudiant';
+export type UserRole = 'Administrateur' | 'Responsable sportif' | 'Capitaine equipe' | 'Étudiant';
 
 export interface User {
   id: string;

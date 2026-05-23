@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input,inject } from '@angular/core';
+import { Component, Input,OnInit,inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   User as UserIcon,
@@ -20,10 +20,10 @@ import {Loginservice } from '../../services/auth/login/loginservice';
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
+export class Profile implements OnInit {
 private Loginservice = inject(Loginservice);
 
-  @Input() currentUser: User | null = null;
+ currentUser: User | null = null;
  @Input() showToast: (
     msg: string,
     type: 'success' | 'error'
@@ -52,6 +52,7 @@ private Loginservice = inject(Loginservice);
   ];
 
   ngOnInit(): void {
+this.currentUser = this.Loginservice.getCurrentUser();
     if (this.currentUser) {
       this.firstName = this.currentUser.firstName;
       this.lastName = this.currentUser.lastName;

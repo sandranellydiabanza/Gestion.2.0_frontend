@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input ,inject} from '@angular/core';
+import { Component, Input ,OnInit,inject} from '@angular/core';
 import {Equipeservice} from '../../services/equipe/equipeservice';
 import { Matchservice } from '../../services/match/matchservice';
 import { Competitionservice } from '../../services/competition/competitionservice';
@@ -29,7 +29,7 @@ import { Competition, EtablissementStanding, Match, Team } from '../../types/typ
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
 
 private EquipeService = inject(Equipeservice);
 private MatchService = inject(Matchservice);
@@ -57,45 +57,48 @@ private ClassementService = inject(Classementservice);
 
   loading = true;
 
-  async ngOnInit(): Promise<void> {
-    await this.loadData();
+  async ngOnInit() {
+   await   this.loadData();
   }
+async loadData(): Promise<void> {
+  
 
-  async loadData(): Promise<void> {
+  try {
+    const [
+      allTeams,
+      allMatches,
+      allCompetitions,
+      standings
+    ] = await Promise.all([
+      this.EquipeService.getAllTeams(),
+      this.MatchService.getAllMatches(),
+      this.CompetitionService.getAllCompetitions(),
+      this.ClassementService.getInterEcolesStandings()
+    ]);
 
-    this.loading = true;
+    this.teams = allTeams;
+    this.matches = allMatches;
+    this.competitions = allCompetitions;
+    this.schoolStandings = standings;
+        this.loading = false;
 
-    try {
 
-      const [
-        allTeams,
-        allMatches,
-        allCompetitions,
-        standings
-      ] = await Promise.all([
-        this.EquipeService.getAllTeams(),
-        this.MatchService.getAllMatches(),
-        this.CompetitionService.getAllCompetitions(),
-        this.ClassementService.getInterEcolesStandings()
-      ]);
+  } catch (err) {
 
-      this.teams = allTeams;
-      this.matches = allMatches;
-      this.competitions = allCompetitions;
-      this.schoolStandings = standings;
-
-    } catch {
-
+    // Vérifier que showToast est bien défini avant de l'appeler
+    if (this.showToast) {
       this.showToast(
         'Erreur lors du chargement des statistiques du Dashboard',
         'error'
       );
-
-    } finally {
-
-      this.loading = false;
+    } else {
+      console.error('Erreur dashboard:', err);
     }
+
+  } finally {
+    this.loading = false;
   }
+}
 
   // Metrics
   get teamsCount(): number {

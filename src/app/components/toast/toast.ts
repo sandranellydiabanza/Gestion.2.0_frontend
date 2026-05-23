@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 import{ LucideAngularModule,
  CheckCircle,
@@ -14,7 +14,7 @@ import{ LucideAngularModule,
   templateUrl: './toast.html',
   styleUrl: './toast.css',
 })
-export class Toast {
+export class Toast implements OnInit {
 
 
   @Input() message = '';

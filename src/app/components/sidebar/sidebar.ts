@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 import{
@@ -24,7 +24,8 @@ import{
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
-export class Sidebar {
+export class Sidebar implements OnInit   {
+  private router = inject(Router);
 
 
   @Input() currentRoute!: string;
@@ -50,12 +51,12 @@ export class Sidebar {
     if (!this.currentUser) return;
 
     this.navItems = [
-      { id: 'dashboard', label: 'Tableau de bord', icon: this.Activity },
-      { id: 'competitions', label: 'Compétitions', icon: this.Trophy },
-      { id: 'equipes', label: 'Équipes IUSJ', icon: this.Users },
-      { id: 'joueurs', label: 'Joueurs', icon: this.UserCheck },
-      { id: 'matchs', label: 'Matchs & Calendrier', icon: this.Calendar },
-      { id: 'classements', label: 'Classements', icon: this.Layers },
+      { id: '', label: 'Tableau de bord', icon: this.Activity },
+      { id: 'competition', label: 'Compétitions', icon: this.Trophy },
+      { id: 'team', label: 'Équipes IUSJ', icon: this.Users },
+      { id: 'players', label: 'Joueurs', icon: this.UserCheck },
+      { id: 'matches', label: 'Matchs & Calendrier', icon: this.Calendar },
+      { id: 'rankings', label: 'Classements', icon: this.Layers },
       {
         id: 'notifications',
         label: 'Notifications',
@@ -70,7 +71,7 @@ export class Sidebar {
       this.currentUser.role === 'Responsable sportif'
     ) {
       this.navItems.push({
-        id: 'audit-logs',
+        id: 'auditlogs',
         label: 'Journal de Sécurité',
         icon: this.Shield
       });
@@ -78,8 +79,9 @@ export class Sidebar {
   }
 
   onNavigate(route: string): void {
-    console.log('Navigate to:', route);
 
+    // console.log('Navigate to:', route);
+this.router.navigate([`/${route}`]);
     if (window.innerWidth < 1024) {
       this.onToggle();
     }

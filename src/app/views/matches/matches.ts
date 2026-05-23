@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component ,inject, Input} from '@angular/core';
+import { Component ,inject, Input, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Calendar,
@@ -32,7 +32,7 @@ import { Notificationservice } from '../../services/notification/notificationser
   templateUrl: './matches.html',
   styleUrl: './matches.css',
 })
-export class Matches {
+export class Matches implements OnInit {
 
 private MatchService = inject(Matchservice);
 private EquipeService = inject(Equipeservice);

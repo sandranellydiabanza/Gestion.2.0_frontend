@@ -8,7 +8,7 @@ import { Loginservice } from '../../../services/auth/login/loginservice';
 type UserRole =
   | 'Administrateur'
   | 'Responsable sportif'
-  | 'Capitaine d’équipe'
+  | 'Capitaine equipe'
   | 'Étudiant';
 
 @Component({
@@ -44,7 +44,8 @@ async handleSubmit() {
       this.email,
       this.password
     );
-
+console.log('Login result:', result);
+console.log('Current user after login:');
     this.showToast('Connexion réussie 🎉', 'success');
 
     // this.router.navigate(['/dashboard']);

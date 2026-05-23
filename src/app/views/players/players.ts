@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component,inject } from '@angular/core';
+import { Component,inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Search , UserCheck ,User, LucideAngularModule} from 'lucide-angular';
 
@@ -11,7 +11,7 @@ import { Equipeservice } from '../../services/equipe/equipeservice';
   templateUrl: './players.html',
   styleUrl: './players.css',
 })
-export class Players {
+export class Players implements OnInit {
 
   readonly SearchIcon = Search;
   readonly UserCheckIcon = UserCheck;

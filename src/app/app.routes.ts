@@ -45,6 +45,9 @@ export const routes: Routes = [{
     {
     path: 'team', 
     component: Teams },
+     {
+    path: 'notifications', 
+    component: Notifications },
   
    
     ];

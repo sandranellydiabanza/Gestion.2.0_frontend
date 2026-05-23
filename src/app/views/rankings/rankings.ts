@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component,inject, Input } from '@angular/core';
+import { Component,inject, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Award,
@@ -25,7 +25,7 @@ import { Classementservice } from '../../services/classement/classementservice';
   templateUrl: './rankings.html',
   styleUrl: './rankings.css',
 })
-export class Rankings{
+export class Rankings implements OnInit {
    @Input() showToast: (
     msg: string,
     type: 'success' | 'error'

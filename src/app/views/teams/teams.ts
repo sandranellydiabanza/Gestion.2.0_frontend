@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input,inject } from '@angular/core';
+import { Component, Input,OnInit,inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import{
   LucideAngularModule,
@@ -30,7 +30,7 @@ import { Equipeservice } from '../../services/equipe/equipeservice';
   templateUrl: './teams.html',
   styleUrl: './teams.css',
 })
-export class Teams {
+export class Teams implements OnInit {
   
 private Equipeservice = inject(Equipeservice);
  @Input() showToast: (
