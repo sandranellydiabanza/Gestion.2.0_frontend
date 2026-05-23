@@ -18,10 +18,50 @@ import {
 
 // Initial Mock Data Sets
 const INITIAL_USERS: User[] = [
-  { id: 'u1', email: 'admin@iusj.org', firstName: 'Jean-Marc', lastName: 'Nkou', role: 'Administrateur', etablissement: 'Saint Jean Ingénieur', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces' },
-  { id: 'u2', email: 'responsable@iusj.org', firstName: 'Aline', lastName: 'Zanga', role: 'Responsable sportif', etablissement: 'Saint Jean School of Management', avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces' },
-  { id: 'u3', email: 'capitaine@iusj.org', firstName: 'Marc', lastName: 'Atangana', role: 'Capitaine d’équipe', etablissement: 'Saint Jean Ingénieur', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces' },
-  { id: 'u4', email: 'student@iusj.org', firstName: 'Paul', lastName: 'Mbarga', role: 'Étudiant', etablissement: 'Prépa Vogt', avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces' }
+  {
+    id: 'u1',
+    email: 'admin@iusj.org',
+    firstName: 'Jean-Marc',
+    lastName: 'Nkou',
+    role: 'Administrateur',
+    etablissement: 'Saint Jean Ingénieur',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces',
+    motDePasse: 'admin123'
+  },
+  {
+    id: 'u2',
+    email: 'responsable@iusj.org',
+    firstName: 'Aline',
+    lastName: 'Zanga',
+    role: 'Responsable sportif',
+    etablissement: 'Saint Jean School of Management',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
+    motDePasse: 'resp123'
+  },
+  {
+    id: 'u3',
+    email: 'capitaine@iusj.org',
+    firstName: 'Marc',
+    lastName: 'Atangana',
+    role: 'Capitaine d’équipe',
+    etablissement: 'Saint Jean Ingénieur',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces',
+    motDePasse: 'cap123'
+  },
+  {
+    id: 'u4',
+    email: 'student@iusj.org',
+    firstName: 'Paul',
+    lastName: 'Mbarga',
+    role: 'Étudiant',
+    etablissement: 'Prépa Vogt',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces',
+    motDePasse: 'stud123'
+  }
 ];
 
 const INITIAL_COMPETITIONS: Competition[] = [

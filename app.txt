@@ -1,0 +1,171 @@
+<!-- Auth Gate -->
+@if (!currentUser) {
+
+  <app-login
+    (loginSuccess)="handleLoginSuccess($event)"
+    [showToast]="showToast.bind(this)">
+  </app-login>
+
+  @if (toastMessage) {
+    <app-toast
+      [message]="toastMessage"
+      [type]="toastType"
+      (close)="handleCloseToast()">
+    </app-toast>
+  }
+
+} @else {
+
+  <div class="h-screen flex bg-slate-50 overflow-hidden font-sans">
+
+    <!-- Sidebar -->
+    <app-sidebar
+      [currentRoute]="currentRoute"
+      [currentUser]="currentUser"
+      [unreadCount]="unreadCount"
+      [isOpen]="sidebarOpen"
+      (navigate)="navigate($event)"
+      (logout)="handleLogout()"
+      (toggle)="toggleSidebar()">
+    </app-sidebar>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+      <!-- Navbar -->
+      <app-navbar
+        [currentRoute]="currentRoute"
+        [currentUser]="currentUser"
+        [unreadCount]="unreadCount"
+        (navigate)="navigate($event)"
+        (toggleSidebar)="toggleSidebar()"
+        (roleChange)="handleRoleChange($event)">
+      </app-navbar>
+
+      <!-- Page Content -->
+      <main class="flex-1 overflow-y-auto bg-slate-50/50">
+
+        @switch (currentRoute) {
+
+          @case ('dashboard') {
+
+            <app-dashboard
+              (navigate)="navigate($event)"
+              [showToast]="showToast.bind(this)">
+            </app-dashboard>
+
+          }
+
+          @case ('competitions') {
+
+            <app-competitions
+              [currentUser]="currentUser"
+              [showToast]="showToast.bind(this)">
+            </app-competitions>
+
+          }
+
+          @case ('equipes') {
+
+            <app-teams
+              [currentUser]="currentUser"
+              [showToast]="showToast.bind(this)">
+            </app-teams>
+
+          }
+
+          @case ('joueurs') {
+
+            <app-players></app-players>
+
+          }
+
+          @case ('matchs') {
+
+            <app-matches
+              [currentUser]="currentUser"
+              [showToast]="showToast.bind(this)">
+            </app-matches>
+
+          }
+
+          @case ('classements') {
+
+            <app-rankings
+              [showToast]="showToast.bind(this)">
+            </app-rankings>
+
+          }
+
+          @case ('notifications') {
+
+            <app-notification
+              [currentUser]="currentUser"
+              [showToast]="showToast.bind(this)">
+            </app-notification>
+
+          }
+
+          @case ('profile') {
+
+            <app-profile
+              [currentUser]="currentUser"
+              (profileUpdated)="handleProfileUpdated($event)"
+              [showToast]="showToast.bind(this)">
+            </app-profile>
+
+          }
+
+          @case ('audit-logs') {
+
+            @if (
+              currentUser.role === 'Administrateur' ||
+              currentUser.role === 'Responsable sportif'
+            ) {
+
+              <app-audit-logs
+                [currentUser]="currentUser"
+                [showToast]="showToast.bind(this)">
+              </app-audit-logs>
+
+            } @else {
+
+              <app-dashboard
+                (navigate)="navigate($event)"
+                [showToast]="showToast.bind(this)">
+              </app-dashboard>
+
+            }
+
+          }
+
+          @default {
+
+            <app-dashboard
+              (navigate)="navigate($event)"
+              [showToast]="showToast.bind(this)">
+            </app-dashboard>
+
+          }
+        }
+
+      </main>
+
+    </div>
+
+    <!-- Toast -->
+    @if (toastMessage) {
+
+      <app-toast
+        [message]="toastMessage"
+        [type]="toastType"
+        (close)="handleCloseToast()">
+      </app-toast>
+
+    }
+
+  </div>
+
+}
+
+<router-outlet />

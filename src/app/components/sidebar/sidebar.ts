@@ -30,7 +30,7 @@ export class Sidebar {
   @Input() currentRoute!: string;
   @Input() currentUser: any =true;
   @Input() unreadCount = 0;
-  @Input() isOpen = false;
+  @Input() isOpen = true;
 
   navItems: any[] = [];
 

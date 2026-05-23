@@ -1,22 +1,18 @@
-
-asedsadsadasd
-@if(currentUser){
+@if (currentUser) {
 
   <!-- Mobile Backdrop -->
-  @if(isOpen){
+  @if (isOpen) {
     <div
-      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
       (click)="onToggle()"
     ></div>
   }
 
   <!-- Sidebar -->
   <aside
-    class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 transform lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between transition-transform duration-300 lg:translate-x-0"
     [class.translate-x-0]="isOpen"
     [class.-translate-x-full]="!isOpen"
-    [class.lg\:static]="true"
-    [class.lg\:h-screen]="true"
   >
 
     <!-- Header -->
@@ -34,6 +30,7 @@ asedsadsadasd
           </div>
 
           <div class="flex flex-col">
+
             <span class="font-bold text-lg text-white tracking-tight">
               IUSJ <span class="text-emerald-400">Sports</span>
             </span>
@@ -41,6 +38,7 @@ asedsadsadasd
             <span class="text-[10px] text-sky-400 font-mono tracking-wider font-semibold">
               PORTAIL ATHLÉTIQUE
             </span>
+
           </div>
 
         </div>
@@ -61,7 +59,7 @@ asedsadsadasd
       <!-- Navigation -->
       <nav class="p-4 space-y-1.5">
 
-        @for(item of navItems; track item.id){
+        @for (item of navItems; track item.id) {
 
           <button
             (click)="onNavigate(item.id)"
@@ -77,14 +75,15 @@ asedsadsadasd
 
               <lucide-angular
                 [img]="item.icon"
-                class="h-4.5 w-4.5"
+                class="h-5 w-5"
               ></lucide-angular>
 
               <span>{{ item.label }}</span>
 
             </div>
 
-            @if(item.badge > 0){
+            @if (item.badge > 0) {
+
               <span
                 class="text-[10px] font-bold px-2 py-0.5 rounded-full"
                 [ngClass]="
@@ -95,6 +94,7 @@ asedsadsadasd
               >
                 {{ item.badge }}
               </span>
+
             }
 
           </button>
@@ -139,7 +139,7 @@ asedsadsadasd
 
         <lucide-angular
           [img]="LogOut"
-          class="h-3.5 w-3.5"
+          class="h-4 w-4"
         ></lucide-angular>
 
         <span>Déconnexion</span>

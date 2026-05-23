@@ -14,7 +14,7 @@ import {Rankings } from './views/rankings/rankings'
 import {Teams } from './views/teams/teams'
 export const routes: Routes = [{
     path: '',
-    component:Login  },{
+    component:Dashboard  },{
     path: 'navbar',
     component:Navbar  },
     {
@@ -23,13 +23,10 @@ export const routes: Routes = [{
      {
     path: 'toast',
     component: Toast  },
-   
-  {
+   {
     path: 'auditlogs',
     component: AuditLogs },
-    {
-    path: 'dashboard',
-    component: Dashboard },
+   
     {
     path: 'matches',
     component: Matches },
@@ -48,5 +45,6 @@ export const routes: Routes = [{
     {
     path: 'team', 
     component: Teams },
+  
    
     ];

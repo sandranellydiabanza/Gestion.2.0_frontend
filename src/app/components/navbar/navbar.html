@@ -24,33 +24,7 @@
   <!-- RIGHT -->
   <div class="flex items-center gap-4">
 
-    <!-- Role changer -->
-    <div
-      class="hidden md:flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200"
-    >
-      <lucide-angular
-        [img]="CpuIcon"
-        class="h-4 w-4 text-sky-500"
-      ></lucide-angular>
-
-      <span class="text-xs font-medium text-slate-500">
-        Rôle de test :
-      </span>
-
-      <select
-  [value]="currentUser?.role"
-  (change)="handleRoleChange($event)"
-  class="text-xs font-semibold bg-transparent border-none text-slate-800 focus:ring-0 cursor-pointer outline-none"
->
-  @for (role of roles; track role) {
-    
-    <option [value]="role">
-      {{ role }}
-    </option>
-
-  }
-</select>
-</div>
+ 
 
     <!-- UTC -->
     <div

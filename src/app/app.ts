@@ -2,10 +2,10 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
-
 import { Sidebar } from './components/sidebar/sidebar';
 import { Navbar } from './components/navbar/navbar';
 import { Toast } from './components/toast/toast';
+import{Main} from './main/main';
 
 import { Login } from './views/auth/login/login';
 import { Dashboard } from './views/dashboard/dashboard';
@@ -40,7 +40,7 @@ import { Notificationservice } from './services/notification/notificationservice
     Notifications,
     Profile,
     AuditLogs,
-    RouterOutlet
+    Main
   ],
 
   templateUrl: './app.html',
